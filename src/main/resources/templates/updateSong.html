@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Song</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Update Song</h1>
+
+    <form th:action="@{/songs/update}" method="POST" enctype="multipart/form-data">
+
+        <input type="hidden" name="id" th:value="${song.id}" />
+
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" id="title" name="title" th:value="${song.title}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Duration:</label>
+            <input type="text" class="form-control" id="duration" name="duration" th:value="${song.duration}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="genre">Genre:</label>
+            <input type="text" class="form-control" id="genre" name="genre" th:value="${song.genre}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="album">Album id:</label>
+            <input type="text" class="form-control" id="album" name="album" th:value="${song.album.getId()}" />
+        </div>
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a th:href="@{/songs}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

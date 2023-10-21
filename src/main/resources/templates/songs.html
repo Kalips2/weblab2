@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>List of Songs</h1>
+</div>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Duration</th>
+        <th>Genre</th>
+        <th>Album id:</th>
+        <th>Delete action</th>
+        <th>Update action</th>
+    </tr>
+    <th:block th:each="song : ${songs}">
+        <tr>
+            <td th:text="${song.title}"></td>
+            <td th:text="${song.duration}"></td>
+            <td th:text="${song.genre}"></td>
+            <td th:text="${song.album.getId()}"></td>
+            <td>
+                <form th:action="@{/songs/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${song.id}"/>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+            <td>
+                <a class="btn btn-info" th:href="@{/songs/update(id=${song.id})}">Update</a>
+            </td>
+        </tr>
+    </th:block>
+</table>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

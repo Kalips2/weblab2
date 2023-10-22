@@ -1,27 +1,23 @@
+name: Deploying to Cloud Store
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Java version
         uses: actions/setup-java@v1
         with:
           java-version: '17'
+          cache: true
 
       - name: Maven build
         run: mvn clean install
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest

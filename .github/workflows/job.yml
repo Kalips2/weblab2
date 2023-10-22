@@ -1,5 +1,3 @@
-name: Build and deploy JAR app to Azure Web App - zoo-lab
-
 on:
   push:
     branches:

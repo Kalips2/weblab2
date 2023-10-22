@@ -11,12 +11,12 @@ VALUES (1, 'Universal Music Group'),
        (3, 'Warner Music Group');
 ALTER SEQUENCE label_id_seq restart with 4;
 
-INSERT INTO album (id, title, release_date, photo_path, artist_id, label_id)
-VALUES (1, 'Album 1', '2022-01-10', '', 1, 1),
-       (2, 'Album 2', '2022-03-05', '', 2, 2),
-       (3, 'Thriller', '1982-11-30', '', 3, 1),
-       (4, 'Like a Virgin', '1984-11-12', '', 4, 2),
-       (5, 'Pink Friday', '2023-11-12', '', 4, 2);
+INSERT INTO album (id, title, release_date, artist_id, label_id, photo_path)
+VALUES (1, 'Album 1', '2022-01-10', 1, 1, 'album1.jpg'),
+       (2, 'Album 2', '2022-03-05', 2, 2, 'album2.jpg'),
+       (3, 'Thriller', '1982-11-30', 3, 1, 'album3.png'),
+       (4, 'Like a Virgin', '1984-11-12', 4, 2, 'album4.png'),
+       (5, 'Pink Friday', '2023-11-12', 4, 2, 'album5.png');
 ALTER SEQUENCE album_id_seq restart with 6;
 
 

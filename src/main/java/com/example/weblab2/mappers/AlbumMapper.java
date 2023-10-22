@@ -5,12 +5,18 @@ import com.example.weblab2.dto.AlbumDto;
 import com.example.weblab2.entities.Album;
 import com.example.weblab2.entities.Artist;
 import com.example.weblab2.entities.Label;
+import com.example.weblab2.services.impl.GoogleStorageService;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.hibernate.annotations.Comment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @UtilityClass
 public class AlbumMapper {
+  private final GoogleStorageService storageService = new GoogleStorageService();
 
+  @SneakyThrows
   public AlbumDto entityToDto(Album album) {
     return AlbumDto.builder()
         .id(album.getId())
@@ -18,8 +24,7 @@ public class AlbumMapper {
         .releaseDate(album.getReleaseDate())
         .artist(ArtistMapper.entityToDto(album.getArtist()))
         .label(LabelMapper.entityToDto(album.getLabel()))
-        // TODO: add photo from storage ??
-        .photo(new byte[] {})
+        .photo(storageService.downloadPhoto(album.getPathToPhoto()))
         .build();
   }
 
@@ -29,8 +34,7 @@ public class AlbumMapper {
         .releaseDate(DataMapper.dateFromString(album.getReleaseDate()))
         .artist(artist)
         .label(label)
-        // TODO: uploading to storage
-        .pathToPhoto("")
+        .pathToPhoto(storageService.uploadPhoto(file))
         .build();
   }
 }

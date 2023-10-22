@@ -59,10 +59,10 @@
         <tr>
             <td th:text="${album.title}"></td>
             <td th:text="${album.artist.name + ' ' + album.artist.surname}"></td>
-            <td th:text="${album.releaseDate}"></td>
+            <td th:text="${album.releaseDateToString()}"></td>
             <td>
                 <img th:if="${album.photo != null}"
-                     th:src="@{'data:image/jpeg;base64,' + #strings.encodeBase64(album.photo)}"
+                     th:src="@{'data:image/jpeg;base64,' + ${album.generateImage()}}"
                      style="max-width:100px;">
             </td>
             <td>

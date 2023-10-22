@@ -13,6 +13,7 @@ import com.example.weblab2.repositories.ArtistRepository;
 import com.example.weblab2.repositories.LabelRepository;
 import com.example.weblab2.services.AlbumService;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class AlbumServiceImpl implements AlbumService {
   private final AlbumRepository albumRepository;
   private final ArtistRepository artistRepository;
   private final LabelRepository labelRepository;
+  private final GoogleStorageService googleStorageService;
 
   @Override
   public List<AlbumDto> getAll() {
@@ -62,27 +64,41 @@ public class AlbumServiceImpl implements AlbumService {
         .findById(id)
         .orElseThrow(() -> new RuntimeException(Exceptions.ALBUM_IS_NOT_FOUND.getMessage()));
     albumToUpdate.setTitle(album.getTitle());
+
     albumToUpdate.setReleaseDate(DataMapper.dateFromString(album.getReleaseDate()));
-    log.info("Data to update: " + DataMapper.dateFromString(album.getReleaseDate()));
+
     Artist newArtist = artistRepository
         .findById(album.getArtistId())
         .orElseThrow(() -> new RuntimeException(Exceptions.ARTIST_IS_NOT_FOUND.getMessage()));
     albumToUpdate.setArtist(newArtist);
+
     Label label = labelRepository
         .findById(album.getLabelId())
         .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
     albumToUpdate.setLabel(label);
-    // TODO: Add storage service to upload MultipartFile
+
+    // Photo uploading
     if (file.getBytes().length != 0) {
-      albumToUpdate.setPathToPhoto("");
+      String photoPath = albumToUpdate.getPathToPhoto();
+      String newPhotoPath;
+      if (!Objects.isNull(photoPath) && !photoPath.isEmpty()) {
+        googleStorageService.deletePhoto(photoPath);
+      }
+      newPhotoPath = googleStorageService.uploadPhoto(file);
+      albumToUpdate.setPathToPhoto(newPhotoPath);
     }
+
     albumRepository.save(albumToUpdate);
     log.info("Album with id = " + id + " was updated");
   }
 
   @Override
   public void delete(Long id) {
-    albumRepository.deleteById(id);
+    Album albumToDelete = albumRepository
+        .findById(id)
+        .orElseThrow(() -> new RuntimeException(Exceptions.ALBUM_IS_NOT_FOUND.getMessage()));
+    albumRepository.delete(albumToDelete);
+    googleStorageService.deletePhoto(albumToDelete.getPathToPhoto());
     log.info("Album with id = " + id + " was deleted");
   }
 }

@@ -1,4 +1,4 @@
-package com.example.weblab2.controllers;
+package com.example.weblab2.controllers.mvc;
 
 import com.example.weblab2.data.SongData;
 import com.example.weblab2.dto.SongDto;

@@ -1,4 +1,4 @@
-package com.example.weblab2.controllers;
+package com.example.weblab2.controllers.mvc;
 
 import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
@@ -31,12 +31,6 @@ public class LabelController {
     List<LabelDto> labels = labelService.getAll();
     model.addAttribute("labels", labels);
     return "labels";
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<LabelDto> getLabelById(@PathVariable Long id) {
-    LabelDto label = labelService.getById(id);
-    return ResponseEntity.ok(label);
   }
 
   @GetMapping("/create")

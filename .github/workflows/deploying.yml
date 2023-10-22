@@ -16,8 +16,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
           version: '313.0.0'
-          project_id: ${{ variables.GOOGLE_PROJECT_ID }}
-          service_account_key: ${{ variables.GOOGLE_SERVICE_ACCOUNT_FILE }}
+          project_id: $GOOGLE_PROJECT_ID
+          service_account_key: $GOOGLE_SERVICE_ACCOUNT_FILE
 
       - name: Authenticate Docker to Google Cloud
         run: gcloud auth configure-docker -q

@@ -1,8 +1,7 @@
-name: Deploying to Cloud Store
-
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+name: Deploying to Cloud Store
 
 jobs:
   build:
@@ -19,8 +18,14 @@ jobs:
       - name: Maven build
         run: mvn clean install
 
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/target/*.jar'
+
   deploy:
     runs-on: ubuntu-latest
-    script:
+    run:
       - gcloud auth activate-service-account --key-file $GOOGLE_SERVICE_ACCOUNT_FILE
       - gcloud app deploy app.yaml --quiet --project $GOOGLE_PROJECT_ID

@@ -1,0 +1,32 @@
+name: Build and deploy JAR app to Azure Web App - zoo-lab
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Java version
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
+
+      - name: Maven build
+        run: mvn clean install
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v2
+        with:
+          name: java-app
+          path: '${{ github.workspace }}/target/*.jar'
+
+  deploy:
+    runs-on: ubuntu-latest
+    script:
+      - gcloud auth activate-service-account --key-file $GOOGLE_SERVICE_ACCOUNT_FILE
+      - gcloud app deploy app.yaml --quiet --project $GOOGLE_PROJECT_ID

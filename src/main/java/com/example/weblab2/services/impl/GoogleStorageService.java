@@ -8,7 +8,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
@@ -23,14 +22,11 @@ public class GoogleStorageService implements StorageService {
 
   private final Storage storage;
 
-  private final String googleCredentials = "D://google-service-creds.json";
   private final String BUCKET = "weblab2-knu";
 
   @SneakyThrows
   public GoogleStorageService() {
-    log.info(googleCredentials);
-    GoogleCredentials credentials =
-        GoogleCredentials.fromStream(new FileInputStream(googleCredentials));
+    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
     storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
   }
 

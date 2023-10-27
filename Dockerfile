@@ -1,7 +1,7 @@
 FROM maven:3.8.1-openjdk-17 AS build-stage
 WORKDIR /weblab2
 COPY . /weblab2/.
-RUN mvn -f /weblab2/pom.xml clean package -DskipTests
+RUN mvn -f /weblab2/pom.xml clean package -DskipTests=true
 
 FROM openjdk:17-jdk-slim
 

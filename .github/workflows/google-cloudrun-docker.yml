@@ -5,7 +5,7 @@ on:
 
 env:
   PROJECT_ID: ${{ vars.PROJECT_ID }}
-  GAR_LOCATION: ${{ vars.GAR_LOCATION }} # TODO: update Artifact Registry location
+  GAR_LOCATION: ${{ vars.REGION_ID }} # TODO: update Artifact Registry location
   REPOSITORY: ${{ vars.REPOSITORY }}
   SERVICE: ${{ vars.SERVICE }} # TODO: update Cloud Run service name
   REGION: ${{ vars.REGION_ID }} # TODO: update Cloud Run service region

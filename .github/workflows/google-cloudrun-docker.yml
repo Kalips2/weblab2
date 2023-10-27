@@ -4,10 +4,10 @@ on:
     branches: [ "main" ]
 
 env:
-  PROJECT_ID: ${{ PROJECT_ID }}
-  GAR_LOCATION: ${{ GAR_LOCATION }} # TODO: update Artifact Registry location
-  SERVICE: ${{ SERVICE }} # TODO: update Cloud Run service name
-  REGION: ${{ REGION_ID }} # TODO: update Cloud Run service region
+  PROJECT_ID: ${{ vars.PROJECT_ID }}
+  GAR_LOCATION: ${{ vars.sGAR_LOCATION }} # TODO: update Artifact Registry location
+  SERVICE: ${{ vars.SERVICE }} # TODO: update Cloud Run service name
+  REGION: ${{ vars.REGION_ID }} # TODO: update Cloud Run service region
 
 jobs:
   deploy:

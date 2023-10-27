@@ -2,6 +2,7 @@ package com.example.weblab2.controllers.rest;
 
 import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
+import com.example.weblab2.dto.SearchDTO;
 import com.example.weblab2.services.LabelService;
 import java.util.List;
 import lombok.AccessLevel;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +30,12 @@ public class LabelRestController {
   @GetMapping("")
   public ResponseEntity<List<LabelDto>> getAllLabels() {
     List<LabelDto> labels = labelService.getAll();
+    return ResponseEntity.ok(labels);
+  }
+
+  @GetMapping("/pagination")
+  public ResponseEntity<List<LabelDto>> getAllLabelsPagination(@RequestBody(required = false) SearchDTO filter) {
+    List<LabelDto> labels = labelService.getAll(filter);
     return ResponseEntity.ok(labels);
   }
 

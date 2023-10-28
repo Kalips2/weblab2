@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -13,4 +12,11 @@ import lombok.RequiredArgsConstructor;
 public class LabelDto {
   private Long id;
   private String name;
+  private CoordinateDto coordinates;
+
+  public String coordinatesToString() {
+    return coordinates == null
+        ? ""
+        : coordinates.getLat() + ", " + coordinates.getLon();
+  }
 }

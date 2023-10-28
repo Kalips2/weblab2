@@ -11,12 +11,14 @@ public class LabelMapper {
     return LabelDto.builder()
         .id(label.getId())
         .name(label.getName())
+        .coordinates(label.getCoordinates())
         .build();
   }
 
   public Label dataToEntity(LabelData label) {
     return Label.builder()
         .name(label.getName())
+        .coordinates(label.getCoordinates())
         .build();
   }
 }

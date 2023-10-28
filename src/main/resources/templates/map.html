@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Example</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet'/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5; /* Фоновий колір сторінки */
+        }
+
+        #map-container {
+            position: relative;
+        }
+
+        .country-select-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+        }
+
+        #map-container {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            width: 60%;
+            height: 60%;
+            margin-top: 50px; /* Відступ від хедеру */
+            background-color: #fff; /* Фоновий колір контейнера */
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .custom-popup {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-popup h5 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .custom-popup p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>MapBox</h1>
+</header>
+
+<div id="map-container">
+    <div id='map'></div>
+    <div class="country-select-container">
+        <label for="country-select">Оберіть країну:</label>
+        <select id="country-select">
+            <option value=""></option>
+        </select>
+    </div>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoia2FsaXBzMiIsImEiOiJjbG85N3ViejMwMjZyMnJwYThhdnhwZ2w0In0.8qlcMiBmVBZu873Znia0_A';
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-74.5, 40],
+        zoom: 9
+    });
+
+    fetch('/rest/labels')
+        .then(response => response.json())
+        .then(data => {
+            let uniqueCountries = new Set();
+            let countryPromises = [];
+
+            data.forEach(function (label) {
+                var coordinates = label.coordinates;
+                if (coordinates.lat && coordinates.lon) {
+                    let promise = getCountryFromCoordinates(coordinates.lon, coordinates.lat)
+                        .then(country => {
+                            if (country) {
+                                uniqueCountries.add(country);
+                            }
+                        });
+                    countryPromises.push(promise);
+                }
+            });
+            return Promise.all(countryPromises)
+                .then(() => uniqueCountries)
+        })
+        .then(uniqueCountries => {
+            var select = document.getElementById('country-select');
+            uniqueCountries.forEach(function (country) {
+                var option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                select.appendChild(option);
+            });
+
+            var selectedOptions = Array.from(select.selectedOptions, option => option.value);
+
+            if (selectedOptions.length === 0) {
+                select.value = '';
+            }
+        })
+
+    fetch('/rest/labels')
+        .then(response => response.json())
+        .then(data => {
+            let markers = [];
+
+            data.forEach(function (label) {
+                var coordinates = label.coordinates;
+                if (coordinates.lat && coordinates.lon) {
+                    var marker = new mapboxgl.Marker().setLngLat([coordinates.lat, coordinates.lon]);
+                    markers.push({ marker: marker, label: label });
+                }
+            });
+
+            document.getElementById('country-select').addEventListener('change', function () {
+                var selectedCountry = this.value;
+
+                markers.forEach(function (markerData) {
+                    var label = markerData.label;
+                    var coordinates = label.coordinates;
+                    var marker = markerData.marker;
+                    var popupContent = '<div class="custom-popup"><h5>' + label.name + '</h5>';
+
+                    if (coordinates.lat && coordinates.lon) {
+                        getCountryFromCoordinates(coordinates.lon, coordinates.lat)
+                            .then(country => {
+                                popupContent += '<p>' + country + '</p></div>';
+                                if (country === selectedCountry || selectedCountry === '') {
+                                    marker.setPopup(new mapboxgl.Popup().setHTML(popupContent));
+                                    marker.addTo(map);
+                                    marker.getElement().style.color = 'red';
+                                } else {
+                                    marker.remove();
+                                }
+                            });
+                    }
+                });
+            });
+        });
+
+    function getCountryFromCoordinates(lat, lon) {
+        var apiKey = mapboxgl.accessToken;
+        var url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${apiKey}`;
+
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var country = data.features[0].context.find(item => item.id.startsWith('country'));
+                return country ? country.text : null;
+            });
+    }
+</script>
+</body>
+</html>

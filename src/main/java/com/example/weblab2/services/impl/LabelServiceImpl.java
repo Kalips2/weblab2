@@ -1,17 +1,16 @@
 package com.example.weblab2.services.impl;
 
-import static com.example.weblab2.dto.SearchDTO.processSearchDTO;
+import static com.example.weblab2.dto.SearchDto.processSearchDTO;
 
 import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
-import com.example.weblab2.dto.SearchDTO;
+import com.example.weblab2.dto.SearchDto;
 import com.example.weblab2.entities.Label;
 import com.example.weblab2.exceptions.Exceptions;
 import com.example.weblab2.mappers.LabelMapper;
 import com.example.weblab2.repositories.LabelRepository;
 import com.example.weblab2.services.LabelService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -33,8 +32,8 @@ public class LabelServiceImpl implements LabelService {
   }
 
   @Override
-  public List<LabelDto> getAll(SearchDTO filter) {
-    SearchDTO searchDTO = processSearchDTO(filter);
+  public List<LabelDto> getAll(SearchDto filter) {
+    SearchDto searchDTO = processSearchDTO(filter);
     Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize());
     return labelRepository.findAll(pageable)
         .stream()
@@ -63,6 +62,7 @@ public class LabelServiceImpl implements LabelService {
         .findById(id)
         .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
     labelToUpdate.setName(label.getName());
+    labelToUpdate.setCoordinates(label.getCoordinates());
     labelRepository.save(labelToUpdate);
     log.info("Label with id = " + id + " was updated");
   }

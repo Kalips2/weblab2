@@ -8,15 +8,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Slf4j
@@ -33,14 +30,22 @@ public class LabelController {
     return "labels";
   }
 
+  @GetMapping("/map")
+  public String getMap(Model model) {
+    List<LabelDto> labels = labelService.getAll();
+    model.addAttribute("labels", labels);
+    return "map";
+  }
+
   @GetMapping("/create")
   public String createLabel() {
     return "addLabel";
   }
 
   @PostMapping("/create")
-  public String createLabel(@RequestParam String name) {
-    LabelData labelData = new LabelData(name);
+  public String createLabel(@RequestParam String name,
+                            @RequestParam String coordinates) {
+    LabelData labelData = new LabelData(name, coordinates);
     labelService.create(labelData);
     return "redirect:/labels";
   }
@@ -55,8 +60,9 @@ public class LabelController {
 
   @PostMapping("/update")
   public String updateLabel(@RequestParam Long id,
-                            @RequestParam String name) {
-    LabelData labelData = new LabelData(name);
+                            @RequestParam String name,
+                            @RequestParam String coordinates) {
+    LabelData labelData = new LabelData(name, coordinates);
     labelService.update(id, labelData);
     return "redirect:/labels";
   }

@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SearchDTO {
+public class SearchDto {
   private int page = 0;
   private int size = 5;
   private int skip = 0;
 
-  public static SearchDTO processSearchDTO(SearchDTO searchDTO) {
-    SearchDTO defaultSearchDTO = new SearchDTO();
+  public static SearchDto processSearchDTO(SearchDto searchDTO) {
+    SearchDto defaultSearchDTO = new SearchDto();
     if (searchDTO != null) {
       defaultSearchDTO.setPage(searchDTO.getPage());
       defaultSearchDTO.setSize(searchDTO.getSize());

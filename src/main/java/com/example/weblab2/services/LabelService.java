@@ -14,6 +14,8 @@ public interface LabelService {
 
   void create(LabelData label) throws RuntimeException;
 
+  void add(LabelData... labelData) throws RuntimeException;
+
   void update(Long id, LabelData label) throws RuntimeException;
 
   void delete(Long id);

@@ -1,5 +1,7 @@
 package com.example.weblab2.services.impl;
 
+import static com.example.weblab2.configuration.CacheConfiguration.ALBUMS;
+
 import com.example.weblab2.data.AlbumData;
 import com.example.weblab2.dto.AlbumDto;
 import com.example.weblab2.entities.Album;
@@ -17,6 +19,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +33,7 @@ public class AlbumServiceImpl implements AlbumService {
   private final GoogleStorageService googleStorageService;
 
   @Override
+  @Cacheable(value = ALBUMS)
   public List<AlbumDto> getAll() {
     return albumRepository.findAll()
         .stream()
@@ -38,6 +42,7 @@ public class AlbumServiceImpl implements AlbumService {
   }
 
   @Override
+  @Cacheable(value = ALBUMS)
   public AlbumDto getById(Long id) {
     Album album = albumRepository
         .findById(id)

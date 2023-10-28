@@ -1,5 +1,8 @@
 package com.example.weblab2.services.impl;
 
+import static com.example.weblab2.configuration.CacheConfiguration.LABELS;
+import static com.example.weblab2.configuration.CacheConfiguration.SONGS;
+
 import com.example.weblab2.data.SongData;
 import com.example.weblab2.dto.SongDto;
 import com.example.weblab2.entities.Album;
@@ -12,6 +15,7 @@ import com.example.weblab2.services.SongService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -22,6 +26,7 @@ public class SongServiceImpl implements SongService {
   private final AlbumRepository albumRepository;
 
   @Override
+  @Cacheable(value = SONGS)
   public List<SongDto> getAll() {
     return songRepository.findAll()
         .stream()
@@ -30,6 +35,7 @@ public class SongServiceImpl implements SongService {
   }
 
   @Override
+  @Cacheable(value = SONGS)
   public SongDto getById(Long id) {
     Song song = songRepository
         .findById(id)

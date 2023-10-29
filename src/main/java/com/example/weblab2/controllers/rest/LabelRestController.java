@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ public class LabelRestController {
   }
 
   @GetMapping("/pagination")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<LabelDto>> getAllLabelsPagination(@RequestBody(required = false)
                                                                SearchDto filter) {
     List<LabelDto> labels = labelService.getAll(filter);
@@ -42,14 +44,16 @@ public class LabelRestController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
   public ResponseEntity<LabelDto> getLabelById(@PathVariable Long id) {
     LabelDto label = labelService.getById(id);
     return ResponseEntity.ok(label);
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createLabel(@RequestPart("name") String name,
-                                       @RequestParam String coordinates) {
+  @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
+  public ResponseEntity<?> createLabel(@RequestBody String name,
+                                       @RequestBody String coordinates) {
     try {
       LabelData labelData = new LabelData(name, coordinates);
       labelService.create(labelData);
@@ -62,9 +66,10 @@ public class LabelRestController {
   }
 
   @PostMapping("/update")
-  public ResponseEntity<?> updateLabel(@RequestPart("id") Long id,
-                                       @RequestPart("name") String name,
-                                       @RequestParam String coordinates) {
+  @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
+  public ResponseEntity<?> updateLabel(@RequestBody Long id,
+                                       @RequestBody String name,
+                                       @RequestBody String coordinates) {
     try {
       LabelData labelData = new LabelData(name, coordinates);
       labelService.update(id, labelData);
@@ -77,7 +82,8 @@ public class LabelRestController {
   }
 
   @PostMapping("/delete")
-  public ResponseEntity<?> deleteLabel(@RequestPart Long id) {
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> deleteLabel(@RequestParam Long id) {
     try {
       labelService.delete(id);
       return ResponseEntity.ok().build();

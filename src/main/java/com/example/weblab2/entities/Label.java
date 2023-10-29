@@ -1,7 +1,7 @@
 package com.example.weblab2.entities;
 
 import com.example.weblab2.converters.CoordinatesConverter;
-import com.example.weblab2.dto.CoordinateDto;
+import com.example.weblab2.dto.map.CoordinateDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

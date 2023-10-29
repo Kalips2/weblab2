@@ -1,4 +1,4 @@
-package com.example.weblab2.dto;
+package com.example.weblab2.dto.map;
 
 
 import java.util.regex.Matcher;
@@ -11,12 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CoordinateDto {
-  private final Pattern pattern = Pattern.compile("\\[?(-?\\d+\\.\\d+), (-?\\d+\\.\\d+)]?");
-
   private double lat;
   private double lon;
 
   public CoordinateDto(String coordinateString) {
+    Pattern pattern = Pattern.compile("\\[?(-?\\d+\\.\\d+), (-?\\d+\\.\\d+)]?");
     Matcher matcher = pattern.matcher(coordinateString);
 
     if (matcher.matches()) {

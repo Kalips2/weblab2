@@ -1,5 +1,6 @@
 package com.example.weblab2.dto;
 
+import com.example.weblab2.dto.map.CoordinateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.example.weblab2.data;
 
-import com.example.weblab2.dto.CoordinateDto;
+import com.example.weblab2.dto.map.CoordinateDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

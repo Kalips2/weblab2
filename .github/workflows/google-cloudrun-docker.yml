@@ -55,6 +55,10 @@ jobs:
             INSTANCE_CONNECTION_NAME=${{ vars.INSTANCE_CONNECTION_NAME }}
             DB_USERNAME=${{ vars.DB_USERNAME }}
             DB_PASSWORD=${{ vars.DB_PASSWORD }}
+            GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}
+            GOOGLE_SECRET_ID=${{ vars.GOOGLE_SECRET_ID }}
+            GOOGLE_REDIRECT_URL=${{ vars.GOOGLE_REDIRECT_URL }}
+            JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}
 
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}

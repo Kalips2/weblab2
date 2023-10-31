@@ -2,6 +2,7 @@ package com.example.weblab2.services.impl.security;
 
 import static com.example.weblab2.exceptions.Exceptions.USER_NOT_FOUND;
 
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(USER_NOT_FOUND));
   }
 }

@@ -8,6 +8,7 @@ import com.example.weblab2.entities.Album;
 import com.example.weblab2.entities.Artist;
 import com.example.weblab2.entities.Label;
 import com.example.weblab2.exceptions.Exceptions;
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.mappers.AlbumMapper;
 import com.example.weblab2.mappers.DataMapper;
 import com.example.weblab2.repositories.AlbumRepository;
@@ -46,7 +47,7 @@ public class AlbumServiceImpl implements AlbumService {
   public AlbumDto getById(Long id) {
     Album album = albumRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.ALBUM_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ALBUM_IS_NOT_FOUND));
     return AlbumMapper.entityToDto(album);
   }
 
@@ -54,10 +55,10 @@ public class AlbumServiceImpl implements AlbumService {
   public void create(AlbumData album, MultipartFile file) throws RuntimeException {
     Artist artist = artistRepository
         .findById(album.getArtistId())
-        .orElseThrow(() -> new RuntimeException(Exceptions.ARTIST_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ARTIST_IS_NOT_FOUND));
     Label label = labelRepository
         .findById(album.getLabelId())
-        .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.LABEL_IS_NOT_FOUND));
     Album savedAlbum = albumRepository.save(AlbumMapper.dataToEntity(album, file, artist, label));
     log.info("Album with id = " + savedAlbum.getId() + " was saved");
   }
@@ -67,19 +68,19 @@ public class AlbumServiceImpl implements AlbumService {
   public void update(Long id, AlbumData album, MultipartFile file) throws RuntimeException {
     Album albumToUpdate = albumRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.ALBUM_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ALBUM_IS_NOT_FOUND));
     albumToUpdate.setTitle(album.getTitle());
 
     albumToUpdate.setReleaseDate(DataMapper.dateFromString(album.getReleaseDate()));
 
     Artist newArtist = artistRepository
         .findById(album.getArtistId())
-        .orElseThrow(() -> new RuntimeException(Exceptions.ARTIST_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ARTIST_IS_NOT_FOUND));
     albumToUpdate.setArtist(newArtist);
 
     Label label = labelRepository
         .findById(album.getLabelId())
-        .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.LABEL_IS_NOT_FOUND));
     albumToUpdate.setLabel(label);
 
     // Photo uploading
@@ -101,7 +102,7 @@ public class AlbumServiceImpl implements AlbumService {
   public void delete(Long id) {
     Album albumToDelete = albumRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.ALBUM_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ALBUM_IS_NOT_FOUND));
     albumRepository.delete(albumToDelete);
     googleStorageService.deletePhoto(albumToDelete.getPathToPhoto());
     log.info("Album with id = " + id + " was deleted");

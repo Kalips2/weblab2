@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -62,6 +63,7 @@ public class SecurityConfiguration {
   private final GoogleOAuth2UserService googleOAuth2UserService;
 
   @Bean
+  @Primary
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .cors().disable()

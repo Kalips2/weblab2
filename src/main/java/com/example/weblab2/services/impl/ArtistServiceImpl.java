@@ -6,6 +6,7 @@ import com.example.weblab2.data.ArtistData;
 import com.example.weblab2.dto.ArtistDto;
 import com.example.weblab2.entities.Artist;
 import com.example.weblab2.exceptions.Exceptions;
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.mappers.ArtistMapper;
 import com.example.weblab2.mappers.DataMapper;
 import com.example.weblab2.repositories.ArtistRepository;
@@ -36,7 +37,7 @@ public class ArtistServiceImpl implements ArtistService {
   public ArtistDto getById(Long id) {
     Artist artist = artistRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.ARTIST_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ARTIST_IS_NOT_FOUND));
     return ArtistMapper.entityToDto(artist);
   }
 
@@ -50,7 +51,7 @@ public class ArtistServiceImpl implements ArtistService {
   public void update(Long id, ArtistData artist) throws RuntimeException {
     Artist artistToUpdate = artistRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.ARTIST_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.ARTIST_IS_NOT_FOUND));
     artistToUpdate.setName(artist.getName());
     artistToUpdate.setSurname(artist.getSurname());
     artistToUpdate.setDateOfBirth(DataMapper.dateFromString(artist.getDateOfBirth()));

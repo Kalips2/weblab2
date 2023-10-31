@@ -4,6 +4,7 @@ import static com.example.weblab2.exceptions.Exceptions.NO_EMAIL;
 
 import com.example.weblab2.dto.security.UserDto;
 import com.example.weblab2.entities.User;
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.mappers.UserMapper;
 import com.example.weblab2.repositories.UserRepository;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class GoogleOAuth2UserService extends DefaultOAuth2UserService {
     String username =  oAuth2User.getAttributes().get("name").toString();
 
     if (Objects.isNull(email) || email.isEmpty()) {
-      throw new RuntimeException(NO_EMAIL.getMessage());
+      throw new InternalException(NO_EMAIL);
     }
 
     Optional<User> userByEmail = userRepository.findByEmail(email);

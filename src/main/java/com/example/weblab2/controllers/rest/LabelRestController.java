@@ -52,8 +52,8 @@ public class LabelRestController {
 
   @PostMapping("/create")
   @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
-  public ResponseEntity<?> createLabel(@RequestBody String name,
-                                       @RequestBody String coordinates) {
+  public ResponseEntity<?> createLabel(@RequestParam String name,
+                                       @RequestParam String coordinates) {
     try {
       LabelData labelData = new LabelData(name, coordinates);
       labelService.create(labelData);
@@ -67,9 +67,9 @@ public class LabelRestController {
 
   @PostMapping("/update")
   @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
-  public ResponseEntity<?> updateLabel(@RequestBody Long id,
-                                       @RequestBody String name,
-                                       @RequestBody String coordinates) {
+  public ResponseEntity<?> updateLabel(@RequestParam Long id,
+                                       @RequestParam String name,
+                                       @RequestParam String coordinates) {
     try {
       LabelData labelData = new LabelData(name, coordinates);
       labelService.update(id, labelData);

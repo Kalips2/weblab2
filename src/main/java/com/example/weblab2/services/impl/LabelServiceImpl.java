@@ -8,6 +8,7 @@ import com.example.weblab2.dto.LabelDto;
 import com.example.weblab2.dto.SearchDto;
 import com.example.weblab2.entities.Label;
 import com.example.weblab2.exceptions.Exceptions;
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.mappers.LabelMapper;
 import com.example.weblab2.repositories.LabelRepository;
 import com.example.weblab2.services.LabelService;
@@ -52,7 +53,7 @@ public class LabelServiceImpl implements LabelService {
   public LabelDto getById(Long id) {
     Label label = labelRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.LABEL_IS_NOT_FOUND));
     return LabelMapper.entityToDto(label);
   }
 
@@ -73,7 +74,7 @@ public class LabelServiceImpl implements LabelService {
   public void update(Long id, LabelData label) throws RuntimeException {
     Label labelToUpdate = labelRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException(Exceptions.LABEL_IS_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(Exceptions.LABEL_IS_NOT_FOUND));
     labelToUpdate.setName(label.getName());
     labelToUpdate.setCoordinates(label.getCoordinates());
     labelRepository.save(labelToUpdate);

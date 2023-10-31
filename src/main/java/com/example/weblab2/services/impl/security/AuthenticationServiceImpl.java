@@ -6,6 +6,7 @@ import com.example.weblab2.data.LoginData;
 import com.example.weblab2.data.RegisterData;
 import com.example.weblab2.dto.security.AuthorityDto;
 import com.example.weblab2.entities.User;
+import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.repositories.UserRepository;
 import com.example.weblab2.services.AuthenticationService;
 import com.example.weblab2.services.JwtService;
@@ -65,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     log.info("Try to log " + data.getEmail());
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword()));
     User user = userRepository.findByEmail(data.getEmail())
-        .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND.getMessage()));
+        .orElseThrow(() -> new InternalException(USER_NOT_FOUND));
     return jwtService.generateToken(user.getAuthorities(), user.getUsername());
   }
 }

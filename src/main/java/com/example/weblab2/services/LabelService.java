@@ -12,7 +12,7 @@ public interface LabelService {
 
   LabelDto getById(Long id);
 
-  void create(LabelData label) throws RuntimeException;
+  Long create(LabelData label) throws RuntimeException;
 
   void add(LabelData... labelData) throws RuntimeException;
 

@@ -12,9 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,8 +58,8 @@ public class LabelRestController {
                                        @RequestParam String coordinates) {
     try {
       LabelData labelData = new LabelData(name, coordinates);
-      labelService.create(labelData);
-      return ResponseEntity.status(HttpStatus.OK).build();
+      Long id = labelService.create(labelData);
+      return ResponseEntity.status(HttpStatus.OK).body(id);
     } catch (RuntimeException e) {
       return ResponseEntity
           .status(HttpStatus.BAD_REQUEST)
@@ -65,7 +67,7 @@ public class LabelRestController {
     }
   }
 
-  @PostMapping("/update")
+  @PutMapping("/update")
   @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
   public ResponseEntity<?> updateLabel(@RequestParam Long id,
                                        @RequestParam String name,
@@ -81,7 +83,7 @@ public class LabelRestController {
     }
   }
 
-  @PostMapping("/delete")
+  @DeleteMapping("/delete")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<?> deleteLabel(@RequestParam Long id) {
     try {

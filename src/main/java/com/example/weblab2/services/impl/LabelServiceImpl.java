@@ -58,9 +58,10 @@ public class LabelServiceImpl implements LabelService {
   }
 
   @Override
-  public void create(LabelData label) throws RuntimeException {
+  public Long create(LabelData label) throws RuntimeException {
     Label savedLabel = labelRepository.save(LabelMapper.dataToEntity(label));
     log.info("Label with id = " + savedLabel.getId() + " was saved");
+    return savedLabel.getId();
   }
 
   @Override

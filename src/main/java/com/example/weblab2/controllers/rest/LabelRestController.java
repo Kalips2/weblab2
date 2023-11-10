@@ -52,6 +52,12 @@ public class LabelRestController {
     return ResponseEntity.ok(label);
   }
 
+  @GetMapping("/albums/{id}")
+  public ResponseEntity<Long> getAmountOfAlbumsOfLabel(@PathVariable Long id) {
+    Long count = labelService.getAmountOfAlbums(id);
+    return ResponseEntity.ok(count);
+  }
+
   @PostMapping("/create")
   @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
   public ResponseEntity<?> createLabel(@RequestParam String name,

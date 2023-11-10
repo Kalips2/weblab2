@@ -10,6 +10,7 @@ import com.example.weblab2.entities.Label;
 import com.example.weblab2.exceptions.Exceptions;
 import com.example.weblab2.exceptions.InternalException;
 import com.example.weblab2.mappers.LabelMapper;
+import com.example.weblab2.repositories.AlbumRepository;
 import com.example.weblab2.repositories.LabelRepository;
 import com.example.weblab2.services.LabelService;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LabelServiceImpl implements LabelService {
   private final LabelRepository labelRepository;
+  private final AlbumRepository albumRepository;
 
   @Override
   @Cacheable(value = LABELS)
@@ -86,5 +88,10 @@ public class LabelServiceImpl implements LabelService {
   public void delete(Long id) {
     labelRepository.deleteById(id);
     log.info("Label with id = " + id + " was deleted");
+  }
+
+  @Override
+  public Long getAmountOfAlbums(Long id) {
+    return albumRepository.countAlbumsByLabelId(id);
   }
 }

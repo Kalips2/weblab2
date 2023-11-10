@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapbox Example</title>
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet'/>
     <style>
         body {
@@ -73,6 +75,15 @@
             margin: 0;
             font-size: 14px;
         }
+        .chart-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .chart-container {
+            width: 45%;
+        }
     </style>
 </head>
 <body>
@@ -88,10 +99,18 @@
             <option value=""></option>
         </select>
     </div>
+    <div class="chart-row">
+        <div class="chart-container">
+            <canvas id="chart1"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="chart2"></canvas>
+        </div>
+    </div>
 </div>
 
 <script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoia2FsaXBzMiIsImEiOiJjbG85N3ViejMwMjZyMnJwYThhdnhwZ2w0In0.8qlcMiBmVBZu873Znia0_A';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoia2FsaXBzMiIsImEiOiJjbG9zd3pzN2gwNHV2MnBvY2NlbDR3OXphIn0.kM5iPQhd4i2BHfp1RD5kSg';
 
     var map = new mapboxgl.Map({
         container: 'map',
@@ -103,23 +122,34 @@
     fetch('/rest/labels')
         .then(response => response.json())
         .then(data => {
+            // Код для першої діаграми тут
+            let promises = [];
             let uniqueCountries = new Set();
-            let countryPromises = [];
-
-            data.forEach(function (label) {
-                var coordinates = label.coordinates;
-                if (coordinates.lat && coordinates.lon) {
-                    let promise = getCountryFromCoordinates(coordinates.lon, coordinates.lat)
-                        .then(country => {
-                            if (country) {
-                                uniqueCountries.add(country);
-                            }
-                        });
-                    countryPromises.push(promise);
-                }
+            let countryCount = {};
+            let albumCount = {};
+            data.forEach(label => {
+                let promise1 = getCountryFromCoordinates(label.coordinates.lon, label.coordinates.lat).then(
+                    country => {
+                        if (country) {
+                            countryCount[country] = (countryCount[country] || 0) + 1;
+                            uniqueCountries.add(country);
+                        }
+                    }
+                );
+                let promise2 = fetch(`/rest/labels/albums/${label.id}`)
+                    .then(response => response.text())
+                    .then(albums => {
+                        albumCount[label.name] = albums;
+                    })
+                promises.push(promise1);
+                promises.push(promise2);
             });
-            return Promise.all(countryPromises)
-                .then(() => uniqueCountries)
+            return Promise.all(promises)
+                .then(() => {
+                    createBarChart('chart1', 'Кількість лейблів по кожній країні', Object.keys(countryCount), Object.values(countryCount))
+                    createDoughnutChart('chart2', 'Кількість альбомів кожного лейбла', Object.keys(albumCount), Object.values(albumCount))
+                    return uniqueCountries;
+                })
         })
         .then(uniqueCountries => {
             var select = document.getElementById('country-select');
@@ -136,6 +166,30 @@
                 select.value = '';
             }
         })
+
+    function createBarChart(canvasId, label, labels, data) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
 
     fetch('/rest/labels')
         .then(response => response.json())
@@ -186,6 +240,68 @@
                 var country = data.features[0].context.find(item => item.id.startsWith('country'));
                 return country ? country.text : null;
             });
+    }
+
+    function createDoughnutChart(chartId, title, labels, data) {
+        var ctx = document.getElementById(chartId).getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgb(61,255,0)',
+                        'rgb(30,32,33)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgb(61,255,0)',
+                        'rgb(30,32,33)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: title,
+                        fontSize: 16,
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        backgroundColor: function (context) {
+                            return context.dataset.backgroundColor;
+                        },
+                        borderRadius: 5,
+                        font: {
+                            weight: 'bold',
+                            size: '14'
+                        },
+                        formatter: function (value, context) {
+                            return value;
+                        }
+                    }
+                }
+            }
+        });
     }
 </script>
 </body>

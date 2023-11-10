@@ -77,7 +77,10 @@ public class SecurityConfiguration {
                     "/labels/**",
                     "/secure/**",
                     "/login/oauth2/**",
-                    "/"
+                    "/",
+                    "/resources/**",
+                    "/error",
+                    "favicon.ico"
                 )
                 .permitAll()
                 .anyRequest()

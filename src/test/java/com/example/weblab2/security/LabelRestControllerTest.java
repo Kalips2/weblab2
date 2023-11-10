@@ -101,7 +101,7 @@ public class LabelRestControllerTest extends SecurityBaseMocker {
   @WithMockUser(roles = {"ADMIN"})
   public void testDeleteReturnSuccessForAdminUser() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
-            .post(BASE_REST_LABEL_URL + "/delete")
+            .delete(BASE_REST_LABEL_URL + "/delete")
             .param("id", String.valueOf(1))
         )
         .andExpect(status().is(200));
@@ -111,7 +111,7 @@ public class LabelRestControllerTest extends SecurityBaseMocker {
   @WithMockUser(roles = {"USER", "PREMIUM"})
   public void testDeleteReturnUnauthorizedForNonAdminUser() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders
-            .post(BASE_REST_LABEL_URL + "/delete")
+            .delete(BASE_REST_LABEL_URL + "/delete")
             .param("id", String.valueOf(1))
         )
         .andExpect(status().is(401));

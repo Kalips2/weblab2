@@ -20,4 +20,6 @@ public interface LabelService {
 
   void delete(Long id);
 
+  Long getAmountOfAlbums(Long id);
+
 }

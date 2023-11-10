@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSM9YW997D"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-XSM9YW997D');
+    </script>
+    <title>Label</title>
+    <style>
+        #search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #labelSearch {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+        }
+
+        #search-button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #result-container {
+            margin-top: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ui-helper-hidden-accessible {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Find info about label by its name</h1>
+</div>
+<div id="search-container">
+    <form action="/rest/labels/find" method="get" onsubmit="searchLabel(event)" class="form-inline">
+        <label for="labelNameSearch" class="mr-2">Name:</label>
+        <input id="labelNameSearch" name="labelSearch" placeholder="Label name" class="form-control mr-2"/>
+        <button type="submit" class="btn btn-primary" id="search-button">Search</button>
+    </form>
+</div>
+
+<div class="container" id="result-container">
+
+</div>
+<script type="text/javascript">
+    $(document).ready(initAutocomplete);
+
+    function initAutocomplete() {
+        $("#labelNameSearch").autocomplete({
+            minLength: 2,
+            delay: 100,
+            source: fetchLabels
+        });
+    }
+
+    function fetchLabels(request, response) {
+        $.ajax({
+            url: "/rest/labels/findByName/" + request.term,
+            type: "GET",
+            dataType: 'json',
+            success: data => {
+                const mappedData = data.map(item => ({ label: item }));
+                response(mappedData);
+            }
+        });
+    }
+</script>
+<script>
+    async function searchLabel(event) {
+        event.preventDefault();
+
+        const labelSearchInput = document.getElementById('labelNameSearch');
+        const resultContainer = document.getElementById('result-container');
+
+        const labelName = labelSearchInput.value;
+
+        try {
+            const response = await fetch(`/rest/labels/name/${labelName}`);
+            const data = await response.json();
+
+            resultContainer.innerHTML = generateResultHtml(data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function generateResultHtml(data) {
+        return `<p>Result: ${JSON.stringify(data)}</p>`;
+    }
+</script>
+</body>
+</html>

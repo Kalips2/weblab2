@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -50,6 +50,17 @@ public class LabelRestController {
   public ResponseEntity<LabelDto> getLabelById(@PathVariable Long id) {
     LabelDto label = labelService.getById(id);
     return ResponseEntity.ok(label);
+  }
+
+  @GetMapping("/name/{name}")
+  public ResponseEntity<LabelDto> getLabelByName(@PathVariable String name) {
+    LabelDto label = labelService.getByName(name).get();
+    return ResponseEntity.ok(label);
+  }
+
+  @GetMapping("/findByName/{name}")
+  public @ResponseBody List<String> getLabelsByName(@PathVariable String name) {
+    return labelService.getNamesThatContain(name);
   }
 
   @GetMapping("/albums/{id}")

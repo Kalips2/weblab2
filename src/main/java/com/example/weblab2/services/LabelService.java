@@ -4,6 +4,7 @@ import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
 import com.example.weblab2.dto.SearchDto;
 import java.util.List;
+import java.util.Optional;
 
 public interface LabelService {
   List<LabelDto> getAll();
@@ -21,5 +22,9 @@ public interface LabelService {
   void delete(Long id);
 
   Long getAmountOfAlbums(Long id);
+
+  Optional<LabelDto> getByName(String name);
+
+  List<String> getNamesThatContain(String name);
 
 }

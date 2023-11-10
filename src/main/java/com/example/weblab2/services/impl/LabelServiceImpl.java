@@ -15,6 +15,7 @@ import com.example.weblab2.repositories.LabelRepository;
 import com.example.weblab2.services.LabelService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -93,5 +94,19 @@ public class LabelServiceImpl implements LabelService {
   @Override
   public Long getAmountOfAlbums(Long id) {
     return albumRepository.countAlbumsByLabelId(id);
+  }
+
+  @Override
+  public Optional<LabelDto> getByName(String name) {
+    return labelRepository.findByName(name).map(LabelMapper::entityToDto);
+  }
+
+  @Override
+  public List<String> getNamesThatContain(String name) {
+    return labelRepository.findAll()
+        .stream()
+        .map(Label::getName)
+        .filter(l->l.contains(name))
+        .toList();
   }
 }

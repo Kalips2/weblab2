@@ -20,4 +20,9 @@ public class LabelDto {
         ? ""
         : coordinates.getLat() + ", " + coordinates.getLon();
   }
+
+  @Override
+  public String toString() {
+    return "[" + id + "]: " + name + ", coordinates=" + coordinatesToString();
+  }
 }

@@ -59,6 +59,8 @@ jobs:
             GOOGLE_SECRET_ID=${{ vars.GOOGLE_SECRET_ID }}
             GOOGLE_REDIRECT_URL=${{ vars.GOOGLE_REDIRECT_URL }}
             JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}
+            TELEGRAM_BOT_NAME=${{ vars.TELEGRAM_BOT_NAME }}
+            TELEGRAM_BOT_TOKEN=${{ vars.TELEGRAM_BOT_TOKEN }}
 
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}

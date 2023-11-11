@@ -3,12 +3,14 @@ package com.example.weblab2.controllers.rest;
 import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
 import com.example.weblab2.dto.SearchDto;
+import com.example.weblab2.elastic.dto.LabelElasticDto;
 import com.example.weblab2.services.LabelService;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +38,24 @@ public class LabelRestController {
   public ResponseEntity<List<LabelDto>> getAllLabels() {
     List<LabelDto> labels = labelService.getAll();
     return ResponseEntity.ok(labels);
+  }
+
+  @GetMapping("/elastic")
+  public ResponseEntity<Page<LabelElasticDto>> getAllLabelsElastic(@RequestBody SearchDto searchDto) {
+    Page<LabelElasticDto> allElastic = labelService.getAllElastic(searchDto);
+    return ResponseEntity.ok(allElastic);
+  }
+
+  @GetMapping("/elastic/findByName/{name}")
+  public ResponseEntity<Page<LabelElasticDto>> getByNameElastic(@PathVariable String name, @RequestBody SearchDto searchDto) {
+    Page<LabelElasticDto> byNameElastic = labelService.getByNameElastic(name, searchDto);
+    return ResponseEntity.ok(byNameElastic);
+  }
+
+  @GetMapping("/elastic/{id}")
+  public ResponseEntity<LabelElasticDto> getByIdElastic(@PathVariable String id) {
+    LabelElasticDto byIdElastic = labelService.getByIdElastic(id);
+    return ResponseEntity.ok(byIdElastic);
   }
 
   @GetMapping("/pagination")
@@ -84,6 +105,13 @@ public class LabelRestController {
     }
   }
 
+  @PostMapping("/elastic/create")
+  public ResponseEntity<Void> createElastic(@RequestParam String name,
+                                            @RequestParam String coordinates) {
+    labelService.createElastic(new LabelData(name, coordinates));
+    return ResponseEntity.ok().build();
+  }
+
   @PutMapping("/update")
   @PreAuthorize("hasRole('ADMIN') or hasRole('PREMIUM') or hasRole('USER')")
   public ResponseEntity<?> updateLabel(@RequestParam Long id,
@@ -100,6 +128,14 @@ public class LabelRestController {
     }
   }
 
+  @PutMapping("/elastic/update")
+  public ResponseEntity<Void> updateElastic(@RequestParam String id,
+                                            @RequestParam String name,
+                                            @RequestParam String coordinates) {
+    labelService.updateElastic(id, new LabelData(name, coordinates));
+    return ResponseEntity.ok().build();
+  }
+
   @DeleteMapping("/delete")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<?> deleteLabel(@RequestParam Long id) {
@@ -111,5 +147,11 @@ public class LabelRestController {
           .status(HttpStatus.BAD_REQUEST)
           .body(e.getMessage());
     }
+  }
+
+  @DeleteMapping("/elastic/delete")
+  public ResponseEntity<Void> deleteElastic(@RequestParam String id) {
+    labelService.deleteElastic(id);
+    return ResponseEntity.ok().build();
   }
 }

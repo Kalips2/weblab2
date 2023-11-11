@@ -8,6 +8,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class GoogleStorageService implements StorageService {
 
   @SneakyThrows
   public GoogleStorageService() {
-    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+    GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("C:\\Users\\User\\Downloads\\github-ci-cd.json"));
     storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
   }
 

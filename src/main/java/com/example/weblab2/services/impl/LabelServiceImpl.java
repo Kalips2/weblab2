@@ -6,6 +6,8 @@ import static com.example.weblab2.dto.SearchDto.processSearchDTO;
 import com.example.weblab2.data.LabelData;
 import com.example.weblab2.dto.LabelDto;
 import com.example.weblab2.dto.SearchDto;
+import com.example.weblab2.elastic.dto.LabelElasticDto;
+import com.example.weblab2.elastic.repositories.LabelElasticRepository;
 import com.example.weblab2.entities.Label;
 import com.example.weblab2.exceptions.Exceptions;
 import com.example.weblab2.exceptions.InternalException;
@@ -19,15 +21,18 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class LabelServiceImpl implements LabelService {
   private final LabelRepository labelRepository;
+  private final LabelElasticRepository labelElasticRepository;
   private final AlbumRepository albumRepository;
 
   @Override
@@ -108,5 +113,47 @@ public class LabelServiceImpl implements LabelService {
         .map(Label::getName)
         .filter(l->l.contains(name))
         .toList();
+  }
+
+  @Override
+  public Page<LabelElasticDto> getAllElastic(SearchDto searchDto) {
+    log.info("[Elastic] Get all labels");
+    return labelElasticRepository.findAll(PageRequest.of(searchDto.getPage(), searchDto.getSize()));
+  }
+
+  @Override
+  public Page<LabelElasticDto> getByNameElastic(String name, SearchDto searchDto) {
+    return labelElasticRepository.findByName(name, PageRequest.of(searchDto.getPage(), searchDto.getSize()));
+  }
+
+  @Override
+  public LabelElasticDto getByIdElastic(String id) {
+    return labelElasticRepository.findById(id)
+        .orElseThrow(() -> new InternalException(Exceptions.ELASTIC_LABEL_IS_NOT_FOUND));
+  }
+
+  @Transactional
+  @Override
+  public void createElastic(LabelData labelData) {
+    LabelElasticDto labelElasticDto = LabelMapper.entityToElasticDto(labelData);
+    LabelElasticDto saved = labelElasticRepository.save(labelElasticDto);
+    log.info("[Elastic] Label with id: " + saved.getId() + " created");
+  }
+
+  @Override
+  @Transactional
+  public void updateElastic(String id, LabelData labelData) {
+    LabelElasticDto toUpdate = getByIdElastic(id);
+    toUpdate.setName(labelData.getName());
+    toUpdate.setCoordinates(labelData.getCoordinates().toString());
+    labelElasticRepository.save(toUpdate);
+    log.info("[Elastic] Label with id = " + id + " was updated");
+  }
+
+  @Override
+  @Transactional
+  public void deleteElastic(String id) {
+    labelElasticRepository.delete(getByIdElastic(id));
+    log.info("[Elastic] Label with id = " + id + " was deleted");
   }
 }

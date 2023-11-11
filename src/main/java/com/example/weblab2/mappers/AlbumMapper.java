@@ -2,6 +2,7 @@ package com.example.weblab2.mappers;
 
 import com.example.weblab2.data.AlbumData;
 import com.example.weblab2.dto.AlbumDto;
+import com.example.weblab2.elastic.dto.AlbumElasticDto;
 import com.example.weblab2.entities.Album;
 import com.example.weblab2.entities.Artist;
 import com.example.weblab2.entities.Label;
@@ -37,4 +38,13 @@ public class AlbumMapper {
         .pathToPhoto(storageService.uploadPhoto(file))
         .build();
   }
+
+  public AlbumElasticDto entityToElasticDto(Album album) {
+    return AlbumElasticDto.builder()
+        .id(album.getId())
+        .title(album.getTitle())
+        .releaseDate(album.getReleaseDate())
+        .build();
+  }
+
 }
